@@ -1,0 +1,384 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" color-mode=light>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>【快速了解redis】五种数据类型-Lists篇 - feelin</title>
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="google" content="notranslate" />
+  <meta name="keywords" content="online Learning">
+  <meta name="description" content="前记各位在深圳的小伙伴们，不知大家有没有关注到前段时间...">
+  <meta name="author" content="啊华">
+  <link rel="icon" href="/images/icons/icon-16x16.png" type="image/png" sizes="16x16">
+  <link rel="icon" href="/images/icons/icon-32x32.png" type="image/png" sizes="32x32">
+  <link rel="apple-touch-icon" href="/images/icons/apple-touch-icon.png" sizes="180x180">
+  <meta rel="mask-icon" href="/images/icons/stun-logo.svg" color="#333333">
+  
+    <meta rel="msapplication-TileImage" content="/images/icons/icon-128x128.png">
+    <meta rel="msapplication-TileColor" content="#000000">
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+
+  
+    
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1445822_s6x2xcokxrl.css">
+
+  
+
+  
+    
+<link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css">
+
+  
+
+  
+    
+      
+        
+        
+<link rel="stylesheet" href="https://cdn.bootcss.com/highlight.js/9.18.1/styles/xcode.min.css" name="highlight-style" mode="light">
+
+      
+        
+        
+<link rel="stylesheet" href="https://cdn.bootcss.com/highlight.js/9.18.1/styles/solarized-dark.min.css" name="highlight-style" mode="dark">
+
+      
+  
+
+  <script>
+    var CONFIG = window.CONFIG || {};
+    var ZHAOO = window.ZHAOO || {};
+    CONFIG = {
+      isHome: false,
+      fancybox: true,
+      pjax: false,
+      lazyload: {
+        enable: true,
+        only_post: 'false',
+        loading: '/images/theme/fly.gif'
+      },
+      donate: {
+        enable: false,
+        alipay: '',
+        wechat: ''
+      },
+      galleries: {
+        enable: true
+      },
+      fab: {
+        enable: true,
+        always_show: false
+      },
+      carrier: {
+        enable: true
+      },
+      daovoice: {
+        enable: false
+      },
+      preview: {
+        background: {
+          default: '',
+          api: ''
+        },
+        motto: {
+          default: '我在开了灯的床头下，想问问自己的心啊。',
+          typing: true,
+          api: 'https://v1.hitokoto.cn/?encode=text&c=d',
+          data_contents: ''
+        },
+      },
+      qrcode: {
+        enable: true,
+        type: 'image',
+        image: '/images/theme/weiapp.jpeg',
+      },
+      toc: {
+        enable: true
+      },
+      scrollbar: {
+        type: 'default'
+      },
+      notification: {
+        enable: false,
+        delay: 4500,
+        list: '',
+        page_white_list: '',
+        page_black_list: ''
+      }
+    }
+  </script>
+
+  
+
+  
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 5.4.0"></head>
+
+<body class="lock-screen">
+  <div class="loading"></div>
+  
+    
+
+
+  <nav class="navbar">
+    <div class="left">
+      
+        <i class="iconfont iconhome j-navbar-back-home"></i>
+      
+      
+        <i class="iconfont iconqrcode j-navbar-qrcode"></i>
+      
+      
+        <i class="iconfont iconmoono" id="color-toggle" color-toggle="light"></i>
+      
+    </div>
+    <div class="center">【快速了解redis】五种数据类型-Lists篇</div>
+    <div class="right">
+      <i class="iconfont iconmenu j-navbar-menu"></i>
+    </div>
+    
+      <div id="qrcode-navbar"></div>
+    
+  </nav>
+
+  
+  
+
+<nav class="menu">
+  <div class="menu-wrap">
+    <div class="menu-close">
+      <i class="iconfont iconbaseline-close-px"></i>
+    </div>
+    <ul class="menu-content"><li class="menu-item">
+        <a href="/ " class="underline "> 首页</a>
+      </li><li class="menu-item">
+        <a href="/galleries/ " class="underline "> 摄影</a>
+      </li><li class="menu-item">
+        <a href="/archives/ " class="underline "> 归档</a>
+      </li><li class="menu-item">
+        <a href="/tags/ " class="underline "> 标签</a>
+      </li><li class="menu-item">
+        <a href="/categories/ " class="underline "> 分类</a>
+      </li><li class="menu-item">
+        <a href="/about/ " class="underline "> 关于</a>
+      </li></ul>
+    
+      <div class="menu-copyright"><p>Powered by <a target="_blank" href="https://hexo.io">Hexo</a>  |  Theme - <a target="_blank" href="https://github.com/izhaoo/hexo-theme-zhaoo">zhaoo</a></p></div>
+    
+  </div>
+</nav>
+  <main id="main">
+  <div class="article-wrap">
+    <div class="row container">
+      <div class="col-xl-3"></div>
+      <div class="col-xl-6"><article class="article">
+  <div class="wrap">
+    <section class="head">
+  <img   class="lazyload" data-original="/images/theme/picture.jpeg" src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg=="  draggable="false">
+  <div class="head-mask">
+    <h1 class="head-title">【快速了解redis】五种数据类型-Lists篇</h1>
+    <div class="head-info">
+      <span class="post-info-item"><i class="iconfont iconcalendar"></i>四月 14, 2021</span>
+      
+      <span class="post-info-item"><i class="iconfont iconfont-size"></i>3125</span>
+    </div>
+  </div>
+</section>
+    <section class="main">
+      <section class="content">
+        <h1 id="前记"><a href="#前记" class="headerlink" title="前记"></a>前记</h1><p>各位在深圳的小伙伴们，不知大家有没有关注到前段时间，深圳的文和友在朋友圈火了一把，小伙伴们有没有抽空去打卡呢？</p>
+<p>其中，“茶颜悦色”的开张，更是听说排了长长的一条队，最高峰足足5万人。着实让我这个还没喝过“茶颜悦色”的人对这个牌子产生了兴趣。</p>
+<p>话说回来，为什么要讲这一段消息呢？因为这里隐藏了一个我们要讲的一个知识点：<strong>消息队列</strong> </p>
+<p>我们这次用redis快速地实现消息队列，讲解一下，为什么要实现消息队列，消息队列的一些注意点，是怎么用redis来实现的</p>
+<h2 id="为什么要实现“消息队列”"><a href="#为什么要实现“消息队列”" class="headerlink" title="为什么要实现“消息队列”"></a>为什么要实现“消息队列”</h2><p><strong>首先什么是消息队列</strong><br>消息队列在技术上讲，其实是一种数据存储方式，我们把要处理的数据，按照“排队”的方式管理起来，然后遵循“先到先处理”的方式处理数据。</p>
+<p><strong>消息队列的使用场景</strong><br>借用“茶颜悦色”的例子，其实我们可以看到能用消息队列的经典场景了。<br><img    class="lazyload" data-original="https://img-blog.csdnimg.cn/20210413231303468.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xhbXdpbWhhbTE=,size_16,color_FFFFFF,t_70#pic_center" src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg=="   ><span class="image-caption">在这里插入图片描述</span></p>
+<p>当我们实现的应用程序要处理的请求过多时，要适时使用“消息队列”，让源源不断的请求，一个个地排好队，等待被处理。这种处理方式，在架构设计上，有一个词叫“削峰填谷”，很形象地概括了<strong>消息队列</strong>的经典作用。</p>
+<p>所以，当你所负责的项目中，如果涉及到系统的突发性流量峰值的场景时，不妨考虑下“消息队列”的使用。</p>
+<h2 id="Lists数据类型"><a href="#Lists数据类型" class="headerlink" title="Lists数据类型"></a>Lists数据类型</h2><p>lists的意思是列表，他是基于链表(linked lists)实现的，我们用它来实现<strong>消息队列</strong>，我们假设队列是从左边排到右边的（左边是前头）具体步骤是： </p>
+<p>第一步： 每次来一个请求，我们先把请求排到队列的最右边（后来的都是在前面的右边）<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs bash">127.0.0.1:6379&gt; rpush queue A <span class="hljs-comment"># 把请求A排到最右边</span><br>127.0.0.1:6379&gt; rpush queue B <span class="hljs-comment"># 把请求B排到最右边</span><br>127.0.0.1:6379&gt; rpush queue C <span class="hljs-comment"># 把请求C排到最右边</span><br>127.0.0.1:6379&gt; lrange queue 0 -1 <span class="hljs-comment"># lrange 把queue查出来，-1表示末位</span><br>1) <span class="hljs-string">&quot;A&quot;</span><br>2) <span class="hljs-string">&quot;B&quot;</span><br>3) <span class="hljs-string">&quot;C&quot;</span><br></code></pre></td></tr></table></figure></p>
+<blockquote>
+<p>把数据排到最左边是<strong>lpush</strong></p>
+</blockquote>
+<p>你看是不是把请求的顺序都排好了。</p>
+<p>第二步： 我们每次处理最前面的那个请求<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">127.0.0.1:6379&gt; lpop queue <span class="hljs-comment"># 把queue最左边的请求拿出来</span><br><span class="hljs-string">&quot;A&quot;</span><br></code></pre></td></tr></table></figure></p>
+<blockquote>
+<p>把右边的数据拿出来是<strong>rpop</strong></p>
+</blockquote>
+<p>到此位置，一个<strong>消息队列</strong>的雏形已经有了，排好队，一个一个的处理。</p>
+<p>但是，我们再想一想，这条队能让他一直排下去吗？特别是当应用的处理能力严重不足的时候</p>
+<p>我们是不是该限定这个队列的长度呢？拿茶颜悦色的排队来说，我们就定这个队列只能5w个请求</p>
+<blockquote>
+<p>事实上，redis的lists的长度可达到2^32-1^位，但系统的负载不能仅仅从redis一方面去想，可能还要考虑请求的响应时间等等</p>
+</blockquote>
+<p>所以，我们要对queue这个队列做长度限制，当长度大于5w时，我们该怎么办？这时候继续来的请求，我们该怎么处理呢？</p>
+<p>第三步： 对队列做溢出处理策略，当队列已经有的请求达到5w时，后来的请求，我们只能不做相应，相应的需要将这种状态返回前端（消费端），正如我们会通知太靠后的群众择日再来一样</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 读取队列长度</span><br>127.0.0.1:6379&gt; llen queue <span class="hljs-comment"># 读取queue长度</span><br><span class="hljs-comment"># 伪代码（下面是伪代码，具体实现，视所使用的依赖包的具体用法）</span><br><span class="hljs-keyword">if</span>（redis.llen(queue) &lt;50000）&#123;<br>	redis.rpush(新请求)<br>&#125; <br></code></pre></td></tr></table></figure>
+<p>好了，到此，我们也把lists的一个应用讲完了。（后续降到发布订阅时，我们尝试着使用lists+发布订阅的机制，实现一个简易的即时通讯功能）</p>
+<h2 id="拓展"><a href="#拓展" class="headerlink" title="拓展"></a>拓展</h2><h3 id="lists和array的区别"><a href="#lists和array的区别" class="headerlink" title="lists和array的区别"></a>lists和array的区别</h3><p>回看了下redis的官方文档，发现有这么一个提醒</p>
+<blockquote>
+<p>To explain the List data type it’s better to start with a little bit of theory, as the term List is often used in an improper way by information technology folks</p>
+</blockquote>
+<p>大意就是说，我们对lists的理解需要从理论出发。而这里，不知大家是否发现，array和lists很像。但官网中提到，redis的lists类型是基于链表（linked list）实现的</p>
+<p>在这里,我们得先认识几个概念<br><strong>顺序表</strong>： 顺序表存储的每个数据称为一个元素，各个元素及其索引是一一对应的关系。而它的存储方式有两种</p>
+<ul>
+<li>顺序存储</li>
+<li>链式存储</li>
+</ul>
+<p>其中，顺序存储方式的顺序表，我们可以把它理解成“数组”，它在存储的时候，是需要一块连续的存储空间的；</p>
+<p>链式存储，则是我们所说的链表，它的存储方式不需要连续的存储空间，但它每一个数据，被成为节点（node）,一个node上保存了数据和一个指向上一个数据的指针，这样，链表结构的数据得以串起来。</p>
+<h3 id="课后作业"><a href="#课后作业" class="headerlink" title="课后作业"></a>课后作业</h3><p>redis官方文档给出了一段讲解链表和数组的优缺点的说明，大家尝试翻译一下。</p>
+<blockquote>
+<p>from a very general point of view a List is just a sequence of ordered elements: 10,20,1,2,3 is a list. But the properties of a List implemented using an Array are very different from the properties of a List implemented using a Linked List.<br>Redis lists are implemented via Linked Lists. This means that even if you have millions of elements inside a list, the operation of adding a new element in the head or in the tail of the list is performed in constant time. The speed of adding a new element with the LPUSH command to the head of a list with ten elements is the same as adding an element to the head of list with 10 million elements.<br>What’s the downside? Accessing an element by index is very fast in lists implemented with an Array (constant time indexed access) and not so fast in lists implemented by linked lists (where the operation requires an amount of work proportional to the index of the accessed element).</p>
+</blockquote>
+<p>上一篇文章里，有提到要讲讲“缓存击穿”等的一些知识点的，估计得推到下一次了。太晚了，创业狗太难了。</p>
+<p>心有猛虎，细嗅蔷薇。</p>
+
+      </section>
+      <section class="extra">
+        
+          <ul class="copyright">
+  
+    <li><strong>本文作者：</strong>啊华</li>
+    <li><strong>本文链接：</strong><a href="https://lamwimham.github.io/2021/04/14/redis-data-type-list/index.html" title="https:&#x2F;&#x2F;lamwimham.github.io&#x2F;2021&#x2F;04&#x2F;14&#x2F;redis-data-type-list&#x2F;index.html">https:&#x2F;&#x2F;lamwimham.github.io&#x2F;2021&#x2F;04&#x2F;14&#x2F;redis-data-type-list&#x2F;index.html</a></li>
+    <li><strong>版权声明：</strong>本博客所有文章均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" title="BY-NC-SA" target="_blank" rel="noopener">BY-NC-SA</a> 许可协议，转载请注明出处！</li>
+  
+</ul>
+        
+        
+        
+  <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/redis/" rel="tag">redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/" rel="tag">数据类型</a></li></ul> 
+
+        
+  <nav class="nav">
+    <a></a>
+    <a href="/2021/04/11/redis-data-type-string/">【快速了解redis】五种数据类型-String篇<i class="iconfont iconright"></i></a>
+  </nav>
+
+      </section>
+      
+    </section>
+  </div>
+</article></div>
+      <div class="col-xl-3">
+        
+          
+  <aside class="toc-wrap">
+    <h3 class="toc-title">文章目录：</h3>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%89%8D%E8%AE%B0"><span class="toc-text">前记</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E5%AE%9E%E7%8E%B0%E2%80%9C%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E2%80%9D"><span class="toc-text">为什么要实现“消息队列”</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Lists%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B"><span class="toc-text">Lists数据类型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8B%93%E5%B1%95"><span class="toc-text">拓展</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#lists%E5%92%8Carray%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-text">lists和array的区别</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AF%BE%E5%90%8E%E4%BD%9C%E4%B8%9A"><span class="toc-text">课后作业</span></a></li></ol></li></ol></li></ol>
+  </aside>
+
+        
+      </div>
+    </div>
+  </div>
+</main>
+  
+
+<footer class="footer">
+  <div class="footer-social"><a 
+        href="https://github.com/lamwimham "
+        target="_blank"
+        class="footer-social-item"
+        onMouseOver="this.style.color= '#9f7be1'" 
+        onMouseOut="this.style.color='#33333D'">
+          <i class="iconfont  icongithub-fill "></i>
+      </a><a 
+        href="mailto:lamwimham@gmail.com "
+        target="_blank"
+        class="footer-social-item"
+        onMouseOver="this.style.color= '#fc7301'" 
+        onMouseOut="this.style.color='#33333D'">
+          <i class="iconfont  iconmail "></i>
+      </a></div>
+  
+    <div class="footer-copyright"><p>Powered by <a target="_blank" href="https://hexo.io">Hexo</a>  |  Theme - <a target="_blank" href="https://github.com/izhaoo/hexo-theme-zhaoo">zhaoo</a></p></div>
+  
+</footer>
+  
+      <div class="fab fab-plus">
+    <i class="iconfont iconplus"></i>
+  </div>
+  
+  
+  <div class="fab fab-up">
+    <i class="iconfont iconcaret-up"></i>
+  </div>
+  
+  
+  
+    
+<script src="/js/color-mode.js"></script>
+
+  
+</body>
+
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+
+
+
+  
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery.lazyload/1.9.1/jquery.lazyload.min.js"></script>
+
+
+
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js"></script>
+
+
+
+
+
+
+  
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery.qrcode/1.0/jquery.qrcode.min.js"></script>
+
+
+
+
+<script src="/js/utils.js"></script>
+<script src="/js/script.js"></script>
+
+
+
+
+
+
+
+  <script>
+    (function () {
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+      } else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+      }
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</html>
