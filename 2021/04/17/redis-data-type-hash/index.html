@@ -1,0 +1,398 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" color-mode=light>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>【快速了解redis】五种数据类型-Hash篇 - feelin</title>
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="google" content="notranslate" />
+  <meta name="keywords" content="online Learning">
+  <meta name="description" content="前记开篇之前，还是先絮叨絮叨一下。上一篇讲到redis...">
+  <meta name="author" content="啊华">
+  <link rel="icon" href="/images/icons/icon-16x16.png" type="image/png" sizes="16x16">
+  <link rel="icon" href="/images/icons/icon-32x32.png" type="image/png" sizes="32x32">
+  <link rel="apple-touch-icon" href="/images/icons/apple-touch-icon.png" sizes="180x180">
+  <meta rel="mask-icon" href="/images/icons/stun-logo.svg" color="#333333">
+  
+    <meta rel="msapplication-TileImage" content="/images/icons/icon-128x128.png">
+    <meta rel="msapplication-TileColor" content="#000000">
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+
+  
+    
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1445822_s6x2xcokxrl.css">
+
+  
+
+  
+    
+<link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css">
+
+  
+
+  
+    
+      
+        
+        
+<link rel="stylesheet" href="https://cdn.bootcss.com/highlight.js/9.18.1/styles/xcode.min.css" name="highlight-style" mode="light">
+
+      
+        
+        
+<link rel="stylesheet" href="https://cdn.bootcss.com/highlight.js/9.18.1/styles/solarized-dark.min.css" name="highlight-style" mode="dark">
+
+      
+  
+
+  <script>
+    var CONFIG = window.CONFIG || {};
+    var ZHAOO = window.ZHAOO || {};
+    CONFIG = {
+      isHome: false,
+      fancybox: true,
+      pjax: false,
+      lazyload: {
+        enable: true,
+        only_post: 'false',
+        loading: '/images/theme/fly.gif'
+      },
+      donate: {
+        enable: false,
+        alipay: '',
+        wechat: ''
+      },
+      galleries: {
+        enable: true
+      },
+      fab: {
+        enable: true,
+        always_show: false
+      },
+      carrier: {
+        enable: true
+      },
+      daovoice: {
+        enable: false
+      },
+      preview: {
+        background: {
+          default: '',
+          api: ''
+        },
+        motto: {
+          default: '我在开了灯的床头下，想问问自己的心啊。',
+          typing: true,
+          api: 'https://v1.hitokoto.cn/?encode=text&c=d',
+          data_contents: ''
+        },
+      },
+      qrcode: {
+        enable: true,
+        type: 'image',
+        image: '/images/theme/weiapp.jpeg',
+      },
+      toc: {
+        enable: true
+      },
+      scrollbar: {
+        type: 'default'
+      },
+      notification: {
+        enable: false,
+        delay: 4500,
+        list: '',
+        page_white_list: '',
+        page_black_list: ''
+      }
+    }
+  </script>
+
+  
+
+  
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 5.4.0"></head>
+
+<body class="lock-screen">
+  <div class="loading"></div>
+  
+    
+
+
+  <nav class="navbar">
+    <div class="left">
+      
+        <i class="iconfont iconhome j-navbar-back-home"></i>
+      
+      
+        <i class="iconfont iconqrcode j-navbar-qrcode"></i>
+      
+      
+        <i class="iconfont iconmoono" id="color-toggle" color-toggle="light"></i>
+      
+    </div>
+    <div class="center">【快速了解redis】五种数据类型-Hash篇</div>
+    <div class="right">
+      <i class="iconfont iconmenu j-navbar-menu"></i>
+    </div>
+    
+      <div id="qrcode-navbar"></div>
+    
+  </nav>
+
+  
+  
+
+<nav class="menu">
+  <div class="menu-wrap">
+    <div class="menu-close">
+      <i class="iconfont iconbaseline-close-px"></i>
+    </div>
+    <ul class="menu-content"><li class="menu-item">
+        <a href="/ " class="underline "> 首页</a>
+      </li><li class="menu-item">
+        <a href="/galleries/ " class="underline "> 摄影</a>
+      </li><li class="menu-item">
+        <a href="/archives/ " class="underline "> 归档</a>
+      </li><li class="menu-item">
+        <a href="/tags/ " class="underline "> 标签</a>
+      </li><li class="menu-item">
+        <a href="/categories/ " class="underline "> 分类</a>
+      </li><li class="menu-item">
+        <a href="/about/ " class="underline "> 关于</a>
+      </li></ul>
+    
+      <div class="menu-copyright"><p>Powered by <a target="_blank" href="https://hexo.io">Hexo</a>  |  Theme - <a target="_blank" href="https://github.com/izhaoo/hexo-theme-zhaoo">zhaoo</a></p></div>
+    
+  </div>
+</nav>
+  <main id="main">
+  <div class="article-wrap">
+    <div class="row container">
+      <div class="col-xl-3"></div>
+      <div class="col-xl-6"><article class="article">
+  <div class="wrap">
+    <section class="head">
+  <img   class="lazyload" data-original="/images/theme/picture.jpeg" src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg=="  draggable="false">
+  <div class="head-mask">
+    <h1 class="head-title">【快速了解redis】五种数据类型-Hash篇</h1>
+    <div class="head-info">
+      <span class="post-info-item"><i class="iconfont iconcalendar"></i>四月 17, 2021</span>
+      
+      <span class="post-info-item"><i class="iconfont iconfont-size"></i>2661</span>
+    </div>
+  </div>
+</section>
+    <section class="main">
+      <section class="content">
+        <h1 id="前记"><a href="#前记" class="headerlink" title="前记"></a>前记</h1><p>开篇之前，还是先絮叨絮叨一下。上一篇讲到redis的lists的时候，课后给大家一道作业，讲讲链表和数组的优缺点，这个我会在这次的课后作业里给出见解。</p>
+<p>这次的博客，也吸取了一些朋友的建议，增加代码的实现，因为我们团队的主要技术栈是javascript+java。实战方面，就以nodejs实现为主。</p>
+<h1 id="Hash数据结构"><a href="#Hash数据结构" class="headerlink" title="Hash数据结构"></a>Hash数据结构</h1><p>先看图<br><img    class="lazyload" data-original="https://img-blog.csdnimg.cn/20210415234316715.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xhbXdpbWhhbTE=,size_16,color_FFFFFF,t_70#pic_center" src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg=="   ><span class="image-caption">hash数据结构</span><br>阴影部分就是我们hash的结构，它也是个key-value的结构，但区别于redis的存储数据的key键，我们把hash的key称为field.hash的结构很适合对象的保存。如描述人的姓名，身高，体重，生日等。拿csdn博文来说，一篇博文，有标题、内容，流量数，点赞数等属性，这个对象就适合用hash的数据格式保存了。</p>
+<h2 id="常用指令"><a href="#常用指令" class="headerlink" title="常用指令"></a>常用指令</h2><p>常用指令，我们还是用redis的指令来练习。</p>
+<ol>
+<li>我们创建一篇博文blog,标题是“我的第一篇博文”</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># hset key field value 设置hashkey键，字段field的值为value，返回1表明成功</span><br>127.0.0.1:6379&gt; hset blog title 我的第一篇博文<br>(<span class="hljs-built_in">integer</span>) 1<br></code></pre></td></tr></table></figure>
+<ol>
+<li>填写我们博文的正文。</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">127.0.0.1:6379&gt; hset blog content 这是正文<br>(<span class="hljs-built_in">integer</span>) 1<br></code></pre></td></tr></table></figure>
+<ol>
+<li>初始化我们的点赞数和浏览数</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs bash">127.0.0.1:6379&gt; hset blog like 0<br>(<span class="hljs-built_in">integer</span>) 1<br>127.0.0.1:6379&gt; hset blog views 0<br>(<span class="hljs-built_in">integer</span>) 1<br></code></pre></td></tr></table></figure>
+<blockquote>
+<p>这里要注意的点：如果你是redis命令行操作的时候，查询中文数据的时候，会出现以下的情况。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">&gt;127.0.0.1:6379&gt; hget blog title<br>&gt;<span class="hljs-string">&quot;\xe6\x88\x91\xe7\x9a\x84\xe7\xac\xac\xe4\xb8\x80\xe7\xaf\x87\xe5\x8d\x9a\xe6\x96\x87&quot;</span><br></code></pre></td></tr></table></figure><br>这是序列化的方式造成的，我们只需登录redis的时候，添加<code>--raw</code>即可<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">&gt;redis-cli -p 6379 --raw<br>&gt;127.0.0.1:6379&gt; hget blog title<br>&gt;我的第一篇博文<br></code></pre></td></tr></table></figure></p>
+</blockquote>
+<ol>
+<li>当我们需要修改标题,或者修改内容时</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs bash">127.0.0.1:6379&gt; hset blog title 这是我第二篇了<br>0<br>127.0.0.1:6379&gt; hget blog title<br>这是我第二篇了<br><span class="hljs-comment"># 修改内容同理</span><br></code></pre></td></tr></table></figure>
+<ol>
+<li><p>当你浏览了这篇博文，觉得还不错的时候，举手点了个赞☺</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># HINCRBY hashkey field increment 将hashkey的field字段增加increment</span><br>127.0.0.1:6379&gt; hincrby blog like 1 <span class="hljs-comment"># 将博客的点赞数加1</span><br>1<br>127.0.0.1:6379&gt; hget blog like <span class="hljs-comment"># 读取点赞数</span><br>1<br><span class="hljs-comment"># 浏览量实现同理</span><br></code></pre></td></tr></table></figure>
+<p>至此，我们通过一片博文的操作，讲解了常用的hash散列的操作指令。</p>
+<h2 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h2><p>我们从上面的例子开始分析，用hash有什么优点。我们加入不用hash来实现上面的数据存储，我们可以用什么方式来存储呢？（我们主要从redis的5种数据类型做比较）</p>
+</li>
+<li><p>我们很自然可以想到利用redis的k-v键值对来保存数据,key可以用<code>blog::title</code>的格式来表示博客的标题，value就是标题名。这样，我们就有了<code>blog::title-这是我的第一篇博文</code>、<code>blog::content-这是正文</code>、<code>blog::like-0</code>、<code>blog::views-0</code> 四个数据了，这样我们就能满足需求了，但这有什么不好的地方呢？</p>
+<blockquote>
+<p>我们只描述一个对象，但却创建了4个键,如果一个对象的属性很多,用户写的博文越来越多的时候，创建key的内存消耗也是很大的。这是有优化的空间的。</p>
+</blockquote>
+</li>
+<li>既然创建多个key,是种消耗，那么我就保持一个key ：blog, 然后将title,content,like,views一个对象序列化之后，保存起来就好了。如<br><img    class="lazyload" data-original="https://img-blog.csdnimg.cn/20210416005538612.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xhbXdpbWhhbTE=,size_16,color_FFFFFF,t_70#pic_center" src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg=="   ><span class="image-caption">在这里插入图片描述</span><br>那么这个有什么问题呢？ 如果我们需要去修改标题，我们需要将整个字符串查出来，然后反序列化成对象，修改了标题之后，再序列化，然后在保存。整个过程，“序列化/反序列化”的操作，就很消耗资源了。而hash结构，允许我们对某一字段做修改，而无需全部拿出来，在处理。<br>而且，<br>假设整个博文对象拿出来，只修改其中的标题，在你修改的这个时候，有另外一个人来浏览你的文章，会有什么情况发生呢？<blockquote>
+<p>出现的情况就是，你开始编辑的时候，拿到的博文对象，浏览量是1，标题改成新的，而另一个人浏览文章时，也会读取整个博文对象，浏览量加1变成2，此时，你们保存的时候，会出现浏览量或标题相互覆盖的问题/(ㄒoㄒ)/~~<br>处理此类并发的问题，有一个CAS(compare and swap, 即比较并交换)的思想，这个后续随着我们知识体系渐渐深入之后，单独讲讲。</p>
+</blockquote>
+</li>
+</ol>
+<p>由此可见，对于对象的存储，hash带来的显而易见的好处是</p>
+<ul>
+<li>节省存储空间</li>
+<li>允许更细粒度的操作</li>
+</ul>
+<p><strong>真的要学会精打细算</strong>、<strong>真的要学会精打细算</strong>、<strong>真的要学会精打细算</strong>，架构设计的一个很重要的出发点，就是减少浪费，提高效率</p>
+<h1 id="课后作业"><a href="#课后作业" class="headerlink" title="课后作业"></a>课后作业</h1><ol>
+<li>好了，补回上一篇关于链表和数组的区别<br> 数组的优缺点<ol>
+<li>随机查找效率高(优点)</li>
+<li>可能浪费内存（缺点）</li>
+</ol>
+</li>
+</ol>
+<pre><code>链表的优缺点
+3.    动态添加删除   大小可变（优点）
+4. 不能随机查找，必须从第一个开始遍历，查找效率低(缺点)
+</code></pre><p>其实，数组和链表的优缺点的原因,归根到底还是它的存储方式导致的。大家有兴趣的，可以查查他们存储的方式是怎样的。</p>
+<ol>
+<li>大家可以用redis的hash数据类型实现一个计算器，实现加减法。黄健翔大神的「redis使用手册」里用python实现了个简单的计算器。大家可以看看。(我的橱窗里有这本书的电子书，如果你真的想对redis有很深的了解的话。可以点击购买。以我个人的习惯，更喜欢在微信读书里看书，看到内容不错，再决定买纸质书，纸质书的那种味道，电子书真的替代不了，(<em>^__^</em>) 嘻嘻……)</li>
+</ol>
+<p>写完，已经1点30分了。真的又肝了一晚。欢迎点赞，关注，收藏。希望这些知识，对于刚踏入职场的或者即将不如IT行业的同学们有所帮助。</p>
+
+      </section>
+      <section class="extra">
+        
+          <ul class="copyright">
+  
+    <li><strong>本文作者：</strong>啊华</li>
+    <li><strong>本文链接：</strong><a href="https://lamwimham.github.io/2021/04/17/redis-data-type-hash/index.html" title="https:&#x2F;&#x2F;lamwimham.github.io&#x2F;2021&#x2F;04&#x2F;17&#x2F;redis-data-type-hash&#x2F;index.html">https:&#x2F;&#x2F;lamwimham.github.io&#x2F;2021&#x2F;04&#x2F;17&#x2F;redis-data-type-hash&#x2F;index.html</a></li>
+    <li><strong>版权声明：</strong>本博客所有文章均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" title="BY-NC-SA" target="_blank" rel="noopener">BY-NC-SA</a> 许可协议，转载请注明出处！</li>
+  
+</ul>
+        
+        
+        
+  <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/redis/" rel="tag">redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/" rel="tag">数据类型</a></li></ul> 
+
+        
+  <nav class="nav">
+    <a></a>
+    <a href="/2021/04/14/redis-data-type-list/">【快速了解redis】五种数据类型-Lists篇<i class="iconfont iconright"></i></a>
+  </nav>
+
+      </section>
+      
+    </section>
+  </div>
+</article></div>
+      <div class="col-xl-3">
+        
+          
+  <aside class="toc-wrap">
+    <h3 class="toc-title">文章目录：</h3>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%89%8D%E8%AE%B0"><span class="toc-text">前记</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Hash%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="toc-text">Hash数据结构</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%B8%E7%94%A8%E6%8C%87%E4%BB%A4"><span class="toc-text">常用指令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BC%98%E7%82%B9"><span class="toc-text">优点</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%AF%BE%E5%90%8E%E4%BD%9C%E4%B8%9A"><span class="toc-text">课后作业</span></a></li></ol>
+  </aside>
+
+        
+      </div>
+    </div>
+  </div>
+</main>
+  
+
+<footer class="footer">
+  <div class="footer-social"><a 
+        href="https://github.com/lamwimham "
+        target="_blank"
+        class="footer-social-item"
+        onMouseOver="this.style.color= '#9f7be1'" 
+        onMouseOut="this.style.color='#33333D'">
+          <i class="iconfont  icongithub-fill "></i>
+      </a><a 
+        href="mailto:lamwimham@gmail.com "
+        target="_blank"
+        class="footer-social-item"
+        onMouseOver="this.style.color= '#fc7301'" 
+        onMouseOut="this.style.color='#33333D'">
+          <i class="iconfont  iconmail "></i>
+      </a></div>
+  
+    <div class="footer-copyright"><p>Powered by <a target="_blank" href="https://hexo.io">Hexo</a>  |  Theme - <a target="_blank" href="https://github.com/izhaoo/hexo-theme-zhaoo">zhaoo</a></p></div>
+  
+</footer>
+  
+      <div class="fab fab-plus">
+    <i class="iconfont iconplus"></i>
+  </div>
+  
+  
+  <div class="fab fab-up">
+    <i class="iconfont iconcaret-up"></i>
+  </div>
+  
+  
+  
+    
+<script src="/js/color-mode.js"></script>
+
+  
+</body>
+
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+
+
+
+  
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery.lazyload/1.9.1/jquery.lazyload.min.js"></script>
+
+
+
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js"></script>
+
+
+
+
+
+
+  
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery.qrcode/1.0/jquery.qrcode.min.js"></script>
+
+
+
+
+<script src="/js/utils.js"></script>
+<script src="/js/script.js"></script>
+
+
+
+
+
+
+
+  <script>
+    (function () {
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+      } else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+      }
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</html>
