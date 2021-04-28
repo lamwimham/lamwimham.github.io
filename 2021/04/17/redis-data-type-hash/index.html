@@ -190,7 +190,7 @@
     <div class="head-info">
       <span class="post-info-item"><i class="iconfont iconcalendar"></i>四月 17, 2021</span>
       
-      <span class="post-info-item"><i class="iconfont iconfont-size"></i>2661</span>
+      <span class="post-info-item"><i class="iconfont iconfont-size"></i>2634</span>
     </div>
   </div>
 </section>
@@ -198,7 +198,7 @@
       <section class="content">
         <h1 id="前记"><a href="#前记" class="headerlink" title="前记"></a>前记</h1><p>开篇之前，还是先絮叨絮叨一下。上一篇讲到redis的lists的时候，课后给大家一道作业，讲讲链表和数组的优缺点，这个我会在这次的课后作业里给出见解。</p>
 <p>这次的博客，也吸取了一些朋友的建议，增加代码的实现，因为我们团队的主要技术栈是javascript+java。实战方面，就以nodejs实现为主。</p>
-<h1 id="Hash数据结构"><a href="#Hash数据结构" class="headerlink" title="Hash数据结构"></a>Hash数据结构</h1><p>先看图<br><img    class="lazyload" data-original="https://img-blog.csdnimg.cn/20210415234316715.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xhbXdpbWhhbTE=,size_16,color_FFFFFF,t_70#pic_center" src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg=="   ><span class="image-caption">hash数据结构</span><br>阴影部分就是我们hash的结构，它也是个key-value的结构，但区别于redis的存储数据的key键，我们把hash的key称为field.hash的结构很适合对象的保存。如描述人的姓名，身高，体重，生日等。拿csdn博文来说，一篇博文，有标题、内容，流量数，点赞数等属性，这个对象就适合用hash的数据格式保存了。</p>
+<h1 id="Hash数据结构"><a href="#Hash数据结构" class="headerlink" title="Hash数据结构"></a>Hash数据结构</h1><p>先看图<br><img  src="https://img-blog.csdnimg.cn/20210415234316715.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xhbXdpbWhhbTE=,size_16,color_FFFFFF,t_70#pic_center" class="" title="hash数据结构"  ><span class="image-caption">hash数据结构</span><br>阴影部分就是我们hash的结构，它也是个key-value的结构，但区别于redis的存储数据的key键，我们把hash的key称为field.hash的结构很适合对象的保存。如描述人的姓名，身高，体重，生日等。拿csdn博文来说，一篇博文，有标题、内容，流量数，点赞数等属性，这个对象就适合用hash的数据格式保存了。</p>
 <h2 id="常用指令"><a href="#常用指令" class="headerlink" title="常用指令"></a>常用指令</h2><p>常用指令，我们还是用redis的指令来练习。</p>
 <ol>
 <li>我们创建一篇博文blog,标题是“我的第一篇博文”</li>
@@ -230,30 +230,31 @@
 <p>我们只描述一个对象，但却创建了4个键,如果一个对象的属性很多,用户写的博文越来越多的时候，创建key的内存消耗也是很大的。这是有优化的空间的。</p>
 </blockquote>
 </li>
-<li>既然创建多个key,是种消耗，那么我就保持一个key ：blog, 然后将title,content,like,views一个对象序列化之后，保存起来就好了。如<br><img    class="lazyload" data-original="https://img-blog.csdnimg.cn/20210416005538612.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xhbXdpbWhhbTE=,size_16,color_FFFFFF,t_70#pic_center" src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg=="   ><span class="image-caption">在这里插入图片描述</span><br>那么这个有什么问题呢？ 如果我们需要去修改标题，我们需要将整个字符串查出来，然后反序列化成对象，修改了标题之后，再序列化，然后在保存。整个过程，“序列化/反序列化”的操作，就很消耗资源了。而hash结构，允许我们对某一字段做修改，而无需全部拿出来，在处理。<br>而且，<br>假设整个博文对象拿出来，只修改其中的标题，在你修改的这个时候，有另外一个人来浏览你的文章，会有什么情况发生呢？<blockquote>
+<li>既然创建多个key,是种消耗，那么我就保持一个key ：blog, 然后将title,content,like,views一个对象序列化之后，保存起来就好了。如<img src="https://img-blog.csdnimg.cn/20210416005538612.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xhbXdpbWhhbTE=,size_16,color_FFFFFF,t_70#pic_center" class="">
+那么这个有什么问题呢？ 如果我们需要去修改标题，我们需要将整个字符串查出来，然后反序列化成对象，修改了标题之后，再序列化，然后在保存。整个过程，“序列化/反序列化”的操作，就很消耗资源了。而hash结构，允许我们对某一字段做修改，而无需全部拿出来，在处理。<br>而且，<br>假设整个博文对象拿出来，只修改其中的标题，在你修改的这个时候，有另外一个人来浏览你的文章，会有什么情况发生呢？<blockquote>
 <p>出现的情况就是，你开始编辑的时候，拿到的博文对象，浏览量是1，标题改成新的，而另一个人浏览文章时，也会读取整个博文对象，浏览量加1变成2，此时，你们保存的时候，会出现浏览量或标题相互覆盖的问题/(ㄒoㄒ)/~~<br>处理此类并发的问题，有一个CAS(compare and swap, 即比较并交换)的思想，这个后续随着我们知识体系渐渐深入之后，单独讲讲。</p>
 </blockquote>
 </li>
 </ol>
-<p>由此可见，对于对象的存储，hash带来的显而易见的好处是</p>
+<p>由此可见，对于对象类型数据的存储，hash带来的显而易见的好处是</p>
 <ul>
 <li>节省存储空间</li>
 <li>允许更细粒度的操作</li>
 </ul>
 <p><strong>真的要学会精打细算</strong>、<strong>真的要学会精打细算</strong>、<strong>真的要学会精打细算</strong>，架构设计的一个很重要的出发点，就是减少浪费，提高效率</p>
-<h1 id="课后作业"><a href="#课后作业" class="headerlink" title="课后作业"></a>课后作业</h1><ol>
-<li>好了，补回上一篇关于链表和数组的区别<br> 数组的优缺点<ol>
+<h1 id="课后作业"><a href="#课后作业" class="headerlink" title="课后作业"></a>课后作业</h1><p>好了，补回上一篇关于链表和数组的区别<br>数组的优缺点</p>
+<ol>
 <li>随机查找效率高(优点)</li>
 <li>可能浪费内存（缺点）</li>
 </ol>
-</li>
-</ol>
-<pre><code>链表的优缺点
-3.    动态添加删除   大小可变（优点）
-4. 不能随机查找，必须从第一个开始遍历，查找效率低(缺点)
-</code></pre><p>其实，数组和链表的优缺点的原因,归根到底还是它的存储方式导致的。大家有兴趣的，可以查查他们存储的方式是怎样的。</p>
+<p>链表的优缺点</p>
 <ol>
-<li>大家可以用redis的hash数据类型实现一个计算器，实现加减法。黄健翔大神的「redis使用手册」里用python实现了个简单的计算器。大家可以看看。(我的橱窗里有这本书的电子书，如果你真的想对redis有很深的了解的话。可以点击购买。以我个人的习惯，更喜欢在微信读书里看书，看到内容不错，再决定买纸质书，纸质书的那种味道，电子书真的替代不了，(<em>^__^</em>) 嘻嘻……)</li>
+<li>动态添加删除   大小可变（优点）</li>
+<li>不能随机查找，必须从第一个开始遍历，查找效率低(缺点)</li>
+</ol>
+<p>其实，数组和链表的优缺点的原因,归根到底还是它的存储方式导致的。大家有兴趣的，可以查查他们存储的方式是怎样的。</p>
+<ol>
+<li>大家可以用redis的hash数据类型实现一个计算器，实现加减法。黄健翔大神的「redis使用手册」里用python实现了个简单的计算器。大家可以看看。(如果你真的想对redis有很深的了解的话。可以去购买查阅。以我个人的习惯，更喜欢在微信读书里看书，看到内容不错，再决定买纸质书，纸质书的那种味道，电子书真的替代不了，(<em>^__^</em>) 嘻嘻……)</li>
 </ol>
 <p>写完，已经1点30分了。真的又肝了一晚。欢迎点赞，关注，收藏。希望这些知识，对于刚踏入职场的或者即将不如IT行业的同学们有所帮助。</p>
 
@@ -274,7 +275,7 @@
 
         
   <nav class="nav">
-    <a></a>
+    <a href="/2021/04/28/redis-data-type-set/"><i class="iconfont iconleft"></i>【快速了解redis】五种数据类型-Set篇</a>
     <a href="/2021/04/14/redis-data-type-list/">【快速了解redis】五种数据类型-Lists篇<i class="iconfont iconright"></i></a>
   </nav>
 

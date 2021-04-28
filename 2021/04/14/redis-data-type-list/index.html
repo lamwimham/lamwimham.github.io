@@ -190,7 +190,7 @@
     <div class="head-info">
       <span class="post-info-item"><i class="iconfont iconcalendar"></i>四月 14, 2021</span>
       
-      <span class="post-info-item"><i class="iconfont iconfont-size"></i>3118</span>
+      <span class="post-info-item"><i class="iconfont iconfont-size"></i>3116</span>
     </div>
   </div>
 </section>
@@ -201,7 +201,7 @@
 <p>话说回来，为什么要讲这一段消息呢？因为这里隐藏了一个我们要讲的一个知识点：<strong>消息队列</strong> </p>
 <p>我们这次用redis快速地实现消息队列，讲解一下，为什么要实现消息队列，消息队列的一些注意点，是怎么用redis来实现的</p>
 <h2 id="为什么要实现“消息队列”"><a href="#为什么要实现“消息队列”" class="headerlink" title="为什么要实现“消息队列”"></a>为什么要实现“消息队列”</h2><p><strong>首先什么是消息队列</strong><br>消息队列在技术上讲，其实是一种数据存储方式，我们把要处理的数据，按照“排队”的方式管理起来，然后遵循“先到先处理”的方式处理数据。</p>
-<p><strong>消息队列的使用场景</strong><br>借用“茶颜悦色”的例子，其实我们可以看到能用消息队列的经典场景了。<br><img    class="lazyload" data-original="https://img-blog.csdnimg.cn/20210413231303468.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xhbXdpbWhhbTE=,size_16,color_FFFFFF,t_70#pic_center" src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg=="   ><span class="image-caption">在这里插入图片描述</span></p>
+<p><strong>消息队列的使用场景</strong><br>借用“茶颜悦色”的例子，其实我们可以看到能用消息队列的经典场景了。<br><img  src="https://img-blog.csdnimg.cn/20210413231303468.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xhbXdpbWhhbTE=,size_16,color_FFFFFF,t_70#pic_center" class="" title="排好队的苹果们"  ><span class="image-caption">排好队的苹果们</span></p>
 <p>当我们实现的应用程序要处理的请求过多时，要适时使用“消息队列”，让源源不断的请求，一个个地排好队，等待被处理。这种处理方式，在架构设计上，有一个词叫“削峰填谷”，很形象地概括了<strong>消息队列</strong>的经典作用。</p>
 <p>所以，当你所负责的项目中，如果涉及到系统的突发性流量峰值的场景时，不妨考虑下“消息队列”的使用。</p>
 <h2 id="Lists数据类型"><a href="#Lists数据类型" class="headerlink" title="Lists数据类型"></a>Lists数据类型</h2><p>lists的意思是列表，他是基于链表(linked lists)实现的，我们用它来实现<strong>消息队列</strong>，我们假设队列是从左边排到右边的（左边是前头）具体步骤是： </p>

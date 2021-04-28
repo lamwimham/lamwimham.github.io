@@ -1,0 +1,385 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" color-mode=light>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>【快速了解redis】五种数据类型-Set篇 - feelin</title>
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="google" content="notranslate" />
+  <meta name="keywords" content="online Learning">
+  <meta name="description" content="前记最近因为要部署一套供演示的集群环境，断更了一段时间...">
+  <meta name="author" content="啊华">
+  <link rel="icon" href="/images/icons/icon-16x16.png" type="image/png" sizes="16x16">
+  <link rel="icon" href="/images/icons/icon-32x32.png" type="image/png" sizes="32x32">
+  <link rel="apple-touch-icon" href="/images/icons/apple-touch-icon.png" sizes="180x180">
+  <meta rel="mask-icon" href="/images/icons/stun-logo.svg" color="#333333">
+  
+    <meta rel="msapplication-TileImage" content="/images/icons/icon-128x128.png">
+    <meta rel="msapplication-TileColor" content="#000000">
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+
+  
+    
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1445822_s6x2xcokxrl.css">
+
+  
+
+  
+    
+<link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css">
+
+  
+
+  
+    
+      
+        
+        
+<link rel="stylesheet" href="https://cdn.bootcss.com/highlight.js/9.18.1/styles/xcode.min.css" name="highlight-style" mode="light">
+
+      
+        
+        
+<link rel="stylesheet" href="https://cdn.bootcss.com/highlight.js/9.18.1/styles/solarized-dark.min.css" name="highlight-style" mode="dark">
+
+      
+  
+
+  <script>
+    var CONFIG = window.CONFIG || {};
+    var ZHAOO = window.ZHAOO || {};
+    CONFIG = {
+      isHome: false,
+      fancybox: true,
+      pjax: false,
+      lazyload: {
+        enable: true,
+        only_post: 'false',
+        loading: '/images/theme/fly.gif'
+      },
+      donate: {
+        enable: false,
+        alipay: '',
+        wechat: ''
+      },
+      galleries: {
+        enable: true
+      },
+      fab: {
+        enable: true,
+        always_show: false
+      },
+      carrier: {
+        enable: true
+      },
+      daovoice: {
+        enable: false
+      },
+      preview: {
+        background: {
+          default: '',
+          api: ''
+        },
+        motto: {
+          default: '我在开了灯的床头下，想问问自己的心啊。',
+          typing: true,
+          api: 'https://v1.hitokoto.cn/?encode=text&c=d',
+          data_contents: ''
+        },
+      },
+      qrcode: {
+        enable: true,
+        type: 'image',
+        image: '/images/theme/weiapp.jpeg',
+      },
+      toc: {
+        enable: true
+      },
+      scrollbar: {
+        type: 'default'
+      },
+      notification: {
+        enable: false,
+        delay: 4500,
+        list: '',
+        page_white_list: '',
+        page_black_list: ''
+      }
+    }
+  </script>
+
+  
+
+  
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 5.4.0"></head>
+
+<body class="lock-screen">
+  <div class="loading"></div>
+  
+    
+
+
+  <nav class="navbar">
+    <div class="left">
+      
+        <i class="iconfont iconhome j-navbar-back-home"></i>
+      
+      
+        <i class="iconfont iconqrcode j-navbar-qrcode"></i>
+      
+      
+        <i class="iconfont iconmoono" id="color-toggle" color-toggle="light"></i>
+      
+    </div>
+    <div class="center">【快速了解redis】五种数据类型-Set篇</div>
+    <div class="right">
+      <i class="iconfont iconmenu j-navbar-menu"></i>
+    </div>
+    
+      <div id="qrcode-navbar"></div>
+    
+  </nav>
+
+  
+  
+
+<nav class="menu">
+  <div class="menu-wrap">
+    <div class="menu-close">
+      <i class="iconfont iconbaseline-close-px"></i>
+    </div>
+    <ul class="menu-content"><li class="menu-item">
+        <a href="/ " class="underline "> 首页</a>
+      </li><li class="menu-item">
+        <a href="/galleries/ " class="underline "> 摄影</a>
+      </li><li class="menu-item">
+        <a href="/archives/ " class="underline "> 归档</a>
+      </li><li class="menu-item">
+        <a href="/tags/ " class="underline "> 标签</a>
+      </li><li class="menu-item">
+        <a href="/categories/ " class="underline "> 分类</a>
+      </li><li class="menu-item">
+        <a href="/about/ " class="underline "> 关于</a>
+      </li></ul>
+    
+      <div class="menu-copyright"><p>Powered by <a target="_blank" href="https://hexo.io">Hexo</a>  |  Theme - <a target="_blank" href="https://github.com/izhaoo/hexo-theme-zhaoo">zhaoo</a></p></div>
+    
+  </div>
+</nav>
+  <main id="main">
+  <div class="article-wrap">
+    <div class="row container">
+      <div class="col-xl-3"></div>
+      <div class="col-xl-6"><article class="article">
+  <div class="wrap">
+    <section class="head">
+  <img   class="lazyload" data-original="/images/theme/picture.jpeg" src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg=="  draggable="false">
+  <div class="head-mask">
+    <h1 class="head-title">【快速了解redis】五种数据类型-Set篇</h1>
+    <div class="head-info">
+      <span class="post-info-item"><i class="iconfont iconcalendar"></i>四月 28, 2021</span>
+      
+      <span class="post-info-item"><i class="iconfont iconfont-size"></i>3856</span>
+    </div>
+  </div>
+</section>
+    <section class="main">
+      <section class="content">
+        <h1 id="前记"><a href="#前记" class="headerlink" title="前记"></a>前记</h1><p>最近因为要部署一套供演示的集群环境，断更了一段时间。重新续上。</p>
+<p>在redis官网上找到了个在线熟悉redis指令的网站，给个链接<a target="_blank" rel="noopener" href="https://try.redis.io/?_ga=2.92889945.572304890.1619447408-132781816.1618323342">点击</a></p>
+<p>所有文章里提到的指令，均可以直接在上面练手了。挺方便的<br><img  src="https://img-blog.csdnimg.cn/20210426223506437.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xhbXdpbWhhbTE=,size_16,color_FFFFFF,t_70#pic_center" class="" title="redis try"  ><span class="image-caption">redis try</span></p>
+<h1 id="Set数据类型"><a href="#Set数据类型" class="headerlink" title="Set数据类型"></a>Set数据类型</h1><p>今天讲的set,意为集合，它和另一种数据类型sorted set 的区别，在于它是无序的。他可以允许用户将多个不同的元素，存储到set集合的健值中，这些数据既可以是二进制的，也可以是文本数据。、</p>
+<p>另一方面，他也有点类似我们之前说的Lists数据类型，可以一个健存储多个元素，但区别在于： set集合的元素是唯一的，不重复的，而lists列表的元素是允许重复的。</p>
+<p>所以，当我们用redis进行数据存储的时候，如果你再纠结用set还是lists来保存数据的时候，考虑下你所需要保存的数据，允不允许出现重复的情况。</p>
+<p>如果允许，比如，记录一天的作息安排，那么一天的时间里，可以你上午会有个会，中午午休，下午有个会议，这种可以用lists来保存，如[“开会”，“午休”，“开会”]等。但如果我们要记录一篇文章，有哪些小伙伴点了赞，这个时候，一个用户是只能点一个赞的，拿就要用到集合了，它会忽略掉已经存在的元素。            </p>
+<p>set在数据存储上有两种编码方式；intset编码和hashtable编码方式，如果我们用set存储的是数字，那么数字存储的结构是一个从小到大的整数集合，如果存储的是字符串，那么存储的结构是一个字典对象，字典的键值为我们所要保存的值，字典的值为null。<br><img  src="https://img-blog.csdnimg.cn/20210426232723672.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xhbXdpbWhhbTE=,size_16,color_FFFFFF,t_70" class="" title="set 的数据结构粗略图"  ><span class="image-caption">set 的数据结构粗略图</span></p>
+<p>这里有个注意的点，我们说set是个无序的集合，但前面讲到，如果保存的值是个数字，它会从小到大排列，这无序体现在哪里呢？ 其实这里的无序指的是数据存储的顺序和你录入数据的顺序无关，而不是指数值大小。                                    </p>
+<h2 id="常用方法"><a href="#常用方法" class="headerlink" title="常用方法"></a>常用方法</h2><p>接下来，我们来敲下指令，熟悉下set的指令</p>
+<h3 id="SADD"><a href="#SADD" class="headerlink" title="SADD"></a>SADD</h3><p><strong><em>SADD</em></strong> 将元素添加到集合</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 添加一个元素</span><br>127.0.0.1:6379&gt; SADD fruit Apple<br>(<span class="hljs-built_in">integer</span>) 1<br><span class="hljs-comment"># 添加两个元素</span><br>127.0.0.1:6379&gt; SADD fruit Banana Orange<br>(<span class="hljs-built_in">integer</span>) 2<br></code></pre></td></tr></table></figure>
+<blockquote>
+<p>这里我们可以看到，<strong><em>SADD</em></strong> 指令成功后，会返回当前设置成功的元素数目</p>
+</blockquote>
+<p> <strong><em>SADD</em></strong> 会忽略已存在的元素，比如我们重新设置Apple<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">127.0.0.1:6379&gt; SADD fruit Apple<br>(<span class="hljs-built_in">integer</span>) 0<br></code></pre></td></tr></table></figure></p>
+<blockquote>
+<p>可见，设置返回了0,说明当前fruit这个集合中，并没有元素的变化</p>
+</blockquote>
+<h3 id="SREM"><a href="#SREM" class="headerlink" title="SREM"></a>SREM</h3><p><strong><em>SRME</em></strong> 是<code>set remove</code> 的缩写，意为“从集合中移除元素”。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs bash">127.0.0.1:6379&gt; SREM fruit Apple<br>(<span class="hljs-built_in">integer</span>) 1<br>127.0.0.1:6379&gt; SREM Banana Orange<br>(<span class="hljs-built_in">integer</span>) 2<br></code></pre></td></tr></table></figure></p>
+<blockquote>
+<p>这里指令成功后，返回了被移除的元素数量,它也支持同时移除多个元素。（redis只有版本2.4以上的才允许一次删除多个值，这需要确认你安装的redis版本）</p>
+</blockquote>
+<p><strong><em>SREM</em></strong> 会忽略不存在的元素，比如我们再次删除Apple<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">127.0.0.1:6379&gt; SREM fruit Apple<br>(<span class="hljs-built_in">integer</span>) 0<br></code></pre></td></tr></table></figure></p>
+<blockquote>
+<p>可以看到，返回了0,代表当前没有元素被移除。</p>
+</blockquote>
+<h3 id="SMOVE"><a href="#SMOVE" class="headerlink" title="SMOVE"></a>SMOVE</h3><p><strong><em>SMOVE</em></strong> 是“set move”的缩写 ，其含义就是“将元素移动到另一个集合”,例如： 水果“fruit”里有个西红柿“tomato”，我们把西红柿移动到蔬菜“vegetables”这个集合中<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># SMOVE source target element</span><br>127.0.0.1:6379&gt; SMOVE fruit vegetables Tomato<br>(<span class="hljs-built_in">integer</span>) 0<br></code></pre></td></tr></table></figure></p>
+<blockquote>
+<p>由此可见，SMOVE 返回值是指令成功的元素数量，0代表没有元素发生转移，这里是因为之前我们没有将Tomato加入到fruit,可以先用SADD加入之后再执行上面的指令</p>
+<h3 id="SMEMBERS"><a href="#SMEMBERS" class="headerlink" title="SMEMBERS"></a>SMEMBERS</h3><p><strong><em>SMEMBERS</em></strong>, 是“set members”，意思是，set集合的成员，用于查询集合的元素，我们查看一下“fruit”这个集合有哪些水果<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs bash">127.0.0.1:6379&gt; SMEMBERS fruit<br>1) <span class="hljs-string">&quot;Apple&quot;</span><br>2) <span class="hljs-string">&quot;Orange&quot;</span><br>3) <span class="hljs-string">&quot;Banana&quot;</span><br></code></pre></td></tr></table></figure><br>此前录入的水果都查出来了</p>
+<h3 id="SISMEMBER"><a href="#SISMEMBER" class="headerlink" title="SISMEMBER"></a>SISMEMBER</h3><p><strong><em>SISMEMBER</em></strong> ,是“set is member”?的意思，用于查询元素是否存在于集合之中。,例如我们查下水果里是否还存在Tomato.<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs bash">127.0.0.1:6379&gt; SISMEMBER fruit Tomato<br>(<span class="hljs-built_in">integer</span>) 0<br>127.0.0.1:6379&gt; SISMEMBER vegetables Tomato<br>(<span class="hljs-built_in">integer</span>) 1<br></code></pre></td></tr></table></figure><br> 由上面的指令可以看出，Tomato已经不存在于fruit了，而是存在于vegetables这个集合中了</p>
+</blockquote>
+<h3 id="SCARD"><a href="#SCARD" class="headerlink" title="SCARD"></a>SCARD</h3><p>最后，我们还学一个指令，<strong><em>SCARD</em></strong>, 用于统计集合的元素的数量，如<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">127.0.0.1:6379&gt;  SCARD fruit<br>(<span class="hljs-built_in">integer</span>) 3<br></code></pre></td></tr></table></figure></p>
+<blockquote>
+<p>由此可知，fruit有三个元素</p>
+<h2 id="举个栗子"><a href="#举个栗子" class="headerlink" title="举个栗子"></a>举个栗子</h2><p>我们就拿博客文章的点赞模块的实现来举例子。</p>
+</blockquote>
+<p>需求是：<br>1.每篇文章都有一个点赞的模块，记录点赞情况</p>
+<ol>
+<li>用户点击一次，如果已点赞则取消点赞，如果未点赞，则点赞成功</li>
+<li>查看文章的点赞数</li>
+<li>查看文章的点赞用户列表</li>
+</ol>
+<p>我用nodejs实现了这个点赞类。大家可以用其他的语言实现一次。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * <span class="hljs-doctag">@author <span class="hljs-variable">lamwimham</span></span></span><br><span class="hljs-comment"> * <span class="hljs-doctag">@date </span>2021-04-28</span><br><span class="hljs-comment"> */</span><br><span class="hljs-keyword">const</span> redis = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;redis&#x27;</span>);<br><span class="hljs-comment">//<span class="hljs-doctag">TODO:</span> 1. 连接redis服务器</span><br><br><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">LikeModule</span> </span>&#123;<br><br>  <span class="hljs-comment">/**</span><br><span class="hljs-comment">   * </span><br><span class="hljs-comment">   * <span class="hljs-doctag">@param </span>key 集合键，也可以用文章的id作为键等</span><br><span class="hljs-comment">   */</span><br>  <span class="hljs-function"><span class="hljs-title">constructor</span>(<span class="hljs-params">key</span>)</span> &#123;<br>    <span class="hljs-built_in">this</span>.key = key<br>  &#125;<br>  <span class="hljs-comment">/**</span><br><span class="hljs-comment">   * <span class="hljs-doctag">@description </span>点击，如果没点赞，则记录点赞者的唯一标识，如果已点赞，则取消点赞</span><br><span class="hljs-comment">   * <span class="hljs-doctag">@param <span class="hljs-type">&#123;String&#125;</span> </span>uid 点击者的用户id</span><br><span class="hljs-comment">   * <span class="hljs-doctag">@returns <span class="hljs-type">&#123;Number&#125;</span> </span>返回操作成功与否，0-失败，1-成功 </span><br><span class="hljs-comment">   */</span><br>  <span class="hljs-function"><span class="hljs-title">click</span>(<span class="hljs-params">uid</span>)</span> &#123;<br>    <span class="hljs-keyword">let</span> code = redis.SISMEMBER(<span class="hljs-built_in">this</span>.key, uid); <span class="hljs-comment">// 判断uid是否应点赞</span><br>    <span class="hljs-keyword">if</span> (code) &#123;<br>      <span class="hljs-keyword">return</span> redis.SREM(<span class="hljs-built_in">this</span>.key, uid);<br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>      <span class="hljs-keyword">return</span> redis.SADD(<span class="hljs-built_in">this</span>.key, uid);<br>    &#125;<br>  &#125;<br><br>  <span class="hljs-comment">/**</span><br><span class="hljs-comment">   * 获取点赞的用户列表</span><br><span class="hljs-comment">   * <span class="hljs-doctag">@returns <span class="hljs-type">&#123;String[]&#125;</span> </span>用户列表</span><br><span class="hljs-comment">   */</span><br>  <span class="hljs-function"><span class="hljs-title">getLikedList</span>(<span class="hljs-params"></span>)</span> &#123;<br>    <span class="hljs-keyword">return</span> redis.SMEMBERS(<span class="hljs-built_in">this</span>.key)<br>  &#125;<br><br>  <span class="hljs-comment">/**</span><br><span class="hljs-comment">   * 获取点赞的数量</span><br><span class="hljs-comment">   * <span class="hljs-doctag">@returns <span class="hljs-type">&#123;Number&#125;</span></span></span><br><span class="hljs-comment">   */</span><br>  <span class="hljs-function"><span class="hljs-title">getLikeListCount</span>(<span class="hljs-params"></span>)</span> &#123;<br>    <span class="hljs-keyword">return</span> redis.SCARD(<span class="hljs-built_in">this</span>.key)<br>  &#125;<br>&#125;<br><br><br><span class="hljs-comment">// 实例</span><br><br><span class="hljs-comment">// 创建文章id为1223921的点赞实例</span><br><span class="hljs-keyword">const</span> likeInstance = <span class="hljs-keyword">new</span> LikeModule(<span class="hljs-string">&#x27;passage:1223921&#x27;</span>); <br><span class="hljs-comment">// 用户id为user18849494992的用户给文章点了一个赞</span><br>likeInstance.click(<span class="hljs-string">&#x27;user18849494992&#x27;</span>);<br><span class="hljs-comment">// 用户id为user18849494444的用户给文章点了一个赞</span><br>likeInstance.click(<span class="hljs-string">&#x27;user18849494444&#x27;</span>);<br><span class="hljs-comment">// 用户id为user18849494333的用户给文章点了一个赞</span><br>likeInstance.click(<span class="hljs-string">&#x27;user18849494333&#x27;</span>);<br><span class="hljs-comment">// 获取文章的点赞数</span><br><span class="hljs-keyword">const</span> num = likeInstance.getLikeListCount();<br><span class="hljs-comment">// 获取文章的点赞用户列表</span><br><span class="hljs-keyword">const</span> userList = likeInstance.getLikedList()<br><br></code></pre></td></tr></table></figure>
+<h1 id="课后作业"><a href="#课后作业" class="headerlink" title="课后作业"></a>课后作业</h1><p>今天的课后作业，就是大家可以用python做一次点赞的实现。</p>
+
+      </section>
+      <section class="extra">
+        
+          <ul class="copyright">
+  
+    <li><strong>本文作者：</strong>啊华</li>
+    <li><strong>本文链接：</strong><a href="https://lamwimham.github.io/2021/04/28/redis-data-type-set/index.html" title="https:&#x2F;&#x2F;lamwimham.github.io&#x2F;2021&#x2F;04&#x2F;28&#x2F;redis-data-type-set&#x2F;index.html">https:&#x2F;&#x2F;lamwimham.github.io&#x2F;2021&#x2F;04&#x2F;28&#x2F;redis-data-type-set&#x2F;index.html</a></li>
+    <li><strong>版权声明：</strong>本博客所有文章均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" title="BY-NC-SA" target="_blank" rel="noopener">BY-NC-SA</a> 许可协议，转载请注明出处！</li>
+  
+</ul>
+        
+        
+        
+  <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/redis/" rel="tag">redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/" rel="tag">数据类型</a></li></ul> 
+
+        
+  <nav class="nav">
+    <a></a>
+    <a href="/2021/04/17/redis-data-type-hash/">【快速了解redis】五种数据类型-Hash篇<i class="iconfont iconright"></i></a>
+  </nav>
+
+      </section>
+      
+    </section>
+  </div>
+</article></div>
+      <div class="col-xl-3">
+        
+          
+  <aside class="toc-wrap">
+    <h3 class="toc-title">文章目录：</h3>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%89%8D%E8%AE%B0"><span class="toc-text">前记</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Set%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B"><span class="toc-text">Set数据类型</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%B8%E7%94%A8%E6%96%B9%E6%B3%95"><span class="toc-text">常用方法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#SADD"><span class="toc-text">SADD</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SREM"><span class="toc-text">SREM</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SMOVE"><span class="toc-text">SMOVE</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SMEMBERS"><span class="toc-text">SMEMBERS</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SISMEMBER"><span class="toc-text">SISMEMBER</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SCARD"><span class="toc-text">SCARD</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BE%E4%B8%AA%E6%A0%97%E5%AD%90"><span class="toc-text">举个栗子</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%AF%BE%E5%90%8E%E4%BD%9C%E4%B8%9A"><span class="toc-text">课后作业</span></a></li></ol>
+  </aside>
+
+        
+      </div>
+    </div>
+  </div>
+</main>
+  
+
+<footer class="footer">
+  <div class="footer-social"><a 
+        href="https://github.com/lamwimham "
+        target="_blank"
+        class="footer-social-item"
+        onMouseOver="this.style.color= '#9f7be1'" 
+        onMouseOut="this.style.color='#33333D'">
+          <i class="iconfont  icongithub-fill "></i>
+      </a><a 
+        href="mailto:lamwimham@gmail.com "
+        target="_blank"
+        class="footer-social-item"
+        onMouseOver="this.style.color= '#fc7301'" 
+        onMouseOut="this.style.color='#33333D'">
+          <i class="iconfont  iconmail "></i>
+      </a></div>
+  
+    <div class="footer-copyright"><p>Powered by <a target="_blank" href="https://hexo.io">Hexo</a>  |  Theme - <a target="_blank" href="https://github.com/izhaoo/hexo-theme-zhaoo">zhaoo</a></p></div>
+  
+</footer>
+  
+      <div class="fab fab-plus">
+    <i class="iconfont iconplus"></i>
+  </div>
+  
+  
+  <div class="fab fab-up">
+    <i class="iconfont iconcaret-up"></i>
+  </div>
+  
+  
+  
+    
+<script src="/js/color-mode.js"></script>
+
+  
+</body>
+
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+
+
+
+  
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery.lazyload/1.9.1/jquery.lazyload.min.js"></script>
+
+
+
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js"></script>
+
+
+
+
+
+
+  
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery.qrcode/1.0/jquery.qrcode.min.js"></script>
+
+
+
+
+<script src="/js/utils.js"></script>
+<script src="/js/script.js"></script>
+
+
+
+
+
+
+
+  <script>
+    (function () {
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+      } else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+      }
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</html>
