@@ -190,7 +190,7 @@
     <div class="head-info">
       <span class="post-info-item"><i class="iconfont iconcalendar"></i>四月 28, 2021</span>
       
-      <span class="post-info-item"><i class="iconfont iconfont-size"></i>3856</span>
+      <span class="post-info-item"><i class="iconfont iconfont-size"></i>3860</span>
     </div>
   </div>
 </section>
@@ -226,8 +226,12 @@
 <h3 id="SMOVE"><a href="#SMOVE" class="headerlink" title="SMOVE"></a>SMOVE</h3><p><strong><em>SMOVE</em></strong> 是“set move”的缩写 ，其含义就是“将元素移动到另一个集合”,例如： 水果“fruit”里有个西红柿“tomato”，我们把西红柿移动到蔬菜“vegetables”这个集合中<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># SMOVE source target element</span><br>127.0.0.1:6379&gt; SMOVE fruit vegetables Tomato<br>(<span class="hljs-built_in">integer</span>) 0<br></code></pre></td></tr></table></figure></p>
 <blockquote>
 <p>由此可见，SMOVE 返回值是指令成功的元素数量，0代表没有元素发生转移，这里是因为之前我们没有将Tomato加入到fruit,可以先用SADD加入之后再执行上面的指令</p>
-<h3 id="SMEMBERS"><a href="#SMEMBERS" class="headerlink" title="SMEMBERS"></a>SMEMBERS</h3><p><strong><em>SMEMBERS</em></strong>, 是“set members”，意思是，set集合的成员，用于查询集合的元素，我们查看一下“fruit”这个集合有哪些水果<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs bash">127.0.0.1:6379&gt; SMEMBERS fruit<br>1) <span class="hljs-string">&quot;Apple&quot;</span><br>2) <span class="hljs-string">&quot;Orange&quot;</span><br>3) <span class="hljs-string">&quot;Banana&quot;</span><br></code></pre></td></tr></table></figure><br>此前录入的水果都查出来了</p>
-<h3 id="SISMEMBER"><a href="#SISMEMBER" class="headerlink" title="SISMEMBER"></a>SISMEMBER</h3><p><strong><em>SISMEMBER</em></strong> ,是“set is member”?的意思，用于查询元素是否存在于集合之中。,例如我们查下水果里是否还存在Tomato.<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs bash">127.0.0.1:6379&gt; SISMEMBER fruit Tomato<br>(<span class="hljs-built_in">integer</span>) 0<br>127.0.0.1:6379&gt; SISMEMBER vegetables Tomato<br>(<span class="hljs-built_in">integer</span>) 1<br></code></pre></td></tr></table></figure><br> 由上面的指令可以看出，Tomato已经不存在于fruit了，而是存在于vegetables这个集合中了</p>
+<h3 id="SMEMBERS"><a href="#SMEMBERS" class="headerlink" title="SMEMBERS"></a>SMEMBERS</h3><p><strong><em>SMEMBERS</em></strong>, 是“set members”，意思是，set集合的成员，用于查询集合的元素，我们查看一下“fruit”这个集合有哪些水果<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs bash">127.0.0.1:6379&gt; SMEMBERS fruit<br>1) <span class="hljs-string">&quot;Apple&quot;</span><br>2) <span class="hljs-string">&quot;Orange&quot;</span><br>3) <span class="hljs-string">&quot;Banana&quot;</span><br></code></pre></td></tr></table></figure></p>
+</blockquote>
+<p>此前录入的水果都查出来了</p>
+<h3 id="SISMEMBER"><a href="#SISMEMBER" class="headerlink" title="SISMEMBER"></a>SISMEMBER</h3><p><strong><em>SISMEMBER</em></strong> ,是“set is member”?的意思，用于查询元素是否存在于集合之中。,例如我们查下水果里是否还存在Tomato.<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs bash">127.0.0.1:6379&gt; SISMEMBER fruit Tomato<br>(<span class="hljs-built_in">integer</span>) 0<br>127.0.0.1:6379&gt; SISMEMBER vegetables Tomato<br>(<span class="hljs-built_in">integer</span>) 1<br></code></pre></td></tr></table></figure></p>
+<blockquote>
+<p> 由上面的指令可以看出，Tomato已经不存在于fruit了，而是存在于vegetables这个集合中了</p>
 </blockquote>
 <h3 id="SCARD"><a href="#SCARD" class="headerlink" title="SCARD"></a>SCARD</h3><p>最后，我们还学一个指令，<strong><em>SCARD</em></strong>, 用于统计集合的元素的数量，如<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">127.0.0.1:6379&gt;  SCARD fruit<br>(<span class="hljs-built_in">integer</span>) 3<br></code></pre></td></tr></table></figure></p>
 <blockquote>
